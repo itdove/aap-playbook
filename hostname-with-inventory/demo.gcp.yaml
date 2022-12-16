@@ -1,0 +1,12 @@
+# demo.gcp.yaml
+plugin: "gcp_compute"
+cache: true
+auth_kind: "application"
+filters: (labels.deployment = "dvernier1") OR (labels.main-deployment = "dvernier1")
+projects:
+- gc-ansible-cloud
+hostnames: 
+  - name
+keyed_groups:
+  - key: labels.component
+  

@@ -1,0 +1,14 @@
+- name: Update servers
+  hosts: all
+
+  tasks:
+  - name: get hostname
+    ansible.builtin.command:
+      cmd: "hostname"
+    register: hostname
+
+  - name: Show hostname
+    ansible.builtin.debug:
+      msg:
+        - "hostname: {{ hostname.stdout_lines }}"
+
