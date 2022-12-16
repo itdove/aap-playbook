@@ -1,5 +1,7 @@
 - name: Update servers
-  hosts: "{{ hosts | default('localhost') }}"
+  hosts: "{{ var_hosts | default('localhost') }}"
+  become: "{{ var_user | default('') | length > 0 }}"
+  become_user:  "{{ var_user | default('') }}"
 
   tasks:
   - name: get hostname
@@ -11,4 +13,14 @@
     ansible.builtin.debug:
       msg:
         - "hostname: {{ hostname.stdout_lines }}"
+ 
+  - name: get user
+    ansible.builtin.command:
+      cmd: "whoami"
+    register: whoami
 
+  - name: Show user
+    ansible.builtin.debug:
+      msg:
+        - "whoami: {{ whoami.stdout_lines }}"
+ 

@@ -24,17 +24,17 @@ This solution use tunnel-through-iap to ssh and scp to remote compute.
 ## Playbook
     The hostname.yaml playbook just ssh the hosts (all/_controller/_hub/ungrouped) and run the `hostname` cmd.
 
-    1. To run on remote servers
+    1. To run on remote servers as awx user
     ```
     export GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials
-    ansible-playbook -i demo.gcp.yaml hostname.yaml --extra-vars="hosts=all" --extra-vars=@remote.yaml
+    ansible-playbook -i demo.gcp.yaml hostname.yaml --extra-vars="var_hosts=all var_user=awx" --extra-vars=@remote.yaml
     ```
     The remote.yaml contains some extra variable to gcloud ssh
 
-    2. To run on local
+    2. To run on local as awx user
     ```
     export GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials
-    ansible-playbook -i demo.gcp.yaml hostname.yaml --extra-vars="hosts=localhosts"
+    ansible-playbook -i demo.gcp.yaml hostname.yaml --extra-vars="var_user=awx"
     ```
 
 
