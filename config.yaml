@@ -1,0 +1,7 @@
+network: dvernier1-aap-net
+subnetwork: dvernier1-aap-subnet
+components: 
+- controller
+- hub # controller or hub
+monitoringEnabled: false
+loggingEnabled: false

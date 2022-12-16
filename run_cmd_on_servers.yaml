@@ -1,0 +1,37 @@
+
+- name: Update servers
+  hosts: localhost
+  connection: local
+
+  vars:
+    networkName: "{{ network.split('/')[-1] }}"
+    subnetworkName: "{{ subnetwork.split('/')[-1] }}"
+    mainDeployment: "{{ networkName[:-8] }}"
+
+  tasks:
+
+  - name: Get vm instances
+    ansible.builtin.shell: gcloud compute instances list --filter="(labels.deployment={{ mainDeployment }} OR labels.main-deployment={{ mainDeployment }}) AND labels.component:({{ component }})" --format json
+    register: vmInstances
+    run_once: true
+  
+  - name: Set vm instances
+    ansible.builtin.set_fact:
+      vmInstances: "{{ vmInstances.stdout | from_json }}"
+
+  - name: Run cmds on each instance
+    loop: "{{ vmInstances | list }}"
+    ansible.builtin.shell: gcloud compute ssh --zone {{ item.zone.split('/')[-1] }} {{ item.name }} --tunnel-through-iap --project {{ item.zone.split('/')[-3] }} --command="hostname"
+    register: pwds
+
+  - name: Display results
+    loop: "{{ pwds.results }}"
+    loop_control: 
+      label: "{{ item.cmd }}"
+    ansible.builtin.debug:
+      msg: |
+        "{{ item.stdout }}"
+
+
+
+  

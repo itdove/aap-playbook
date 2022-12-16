@@ -1,0 +1,28 @@
+- name: Setup metrics google-ops-agent for {{ item }}
+  ansible.builtin.shell: |
+    gcloud compute ssh {{ vmInstances[0].name }} \
+    --zone {{ vmInstances[0].zone.split('/')[-1] }} \
+    --tunnel-through-iap \
+    --project {{ vmInstances[0].zone.split('/')[-3] }} \
+    --command="sudo rm /aap/bootstrap/config_file_templates/{{ item }}/gcp-ops-agent-config.yaml; sudo MONITORING_ENABLED={{ monitoringEnabled }} LOGGING_ENABLED={{ monitoringEnabled }} /aap/bootstrap/bootstrap_scripts/update_observability_config.sh {{ item }}"
+  register: r
+
+- name: Display results
+  ansible.builtin.debug:
+    msg: |
+      "{{ r.stdout_lines }}"
+
+- name: Setup metrics awx and podman for {{ item }}
+  ansible.builtin.shell: |
+    gcloud compute ssh {{ vmInstances[0].name }} \
+    --zone {{ vmInstances[0].zone.split('/')[-1] }} \
+    --tunnel-through-iap \
+    --project {{ vmInstances[0].zone.split('/')[-3] }} \
+    --command="sudo rm /aap/bootstrap/config_file_templates/{{ item }}/monitoring.yaml; sudo PLATFORM=GCP PROJECT={{ vmInstances[0].zone.split('/')[-3] }} MAIN_DEPLOYMENT={{ mainDeployment }} MONITORING_ENABLED={{ monitoringEnabled }} /aap/bootstrap/bootstrap_scripts/install_metrics.sh {{ item }}"
+  register: r
+
+- name: Display results
+  ansible.builtin.debug:
+    msg: |
+      stdout: "{{ r.stdout_lines }}"
+

@@ -1,0 +1,3 @@
+monitoringEnabled: false
+loggingEnabled: false
+defaultCollectorInterval: 59s

@@ -1,0 +1,33 @@
+
+- name: Setup metrics
+  hosts: localhost
+  connection: local
+
+  vars:
+    networkName: "{{ network.split('/')[-1] }}"
+    mainDeployment: "{{ networkName[:-8] }}"
+
+  tasks:
+
+  - name: Get vm instances
+    ansible.builtin.shell: gcloud compute instances list --filter="(labels.deployment={{ mainDeployment }} OR labels.main-deployment={{ mainDeployment }}) AND labels.component=hub" --format json
+    register: vmInstances
+    run_once: true
+  
+  - name: Set vm instances
+    ansible.builtin.set_fact:
+      vmInstances: "{{ vmInstances.stdout | from_json }}"
+
+  # - name: Enable metrics
+  #   ansible.builtin.shell: |
+  #     gcloud compute ssh {{ vmInstances[0].name }} \
+  #     --zone {{ vmInstances[0].zone.split('/')[-1] }} \
+  #     --tunnel-through-iap \
+  #     --project {{ vmInstances[0].zone.split('/')[-3] }} \
+  #     --command="sudo sed -ri 's/^(\s*)(defaultCollectorInterval\s*:\s*\w*$)/\defaultCollectorInterval: '"{{ collectorInterval }}"'/' /aap/bootstrap/config_file_templates/{{ component }}/monitoring.yaml" \
+  #   register: pwds
+
+
+  - name: setup metrics and logging
+    include_tasks: setup_logging_metrics_for_a_component.yaml
+    loop: "{{ components }}"

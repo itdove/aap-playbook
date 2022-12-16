@@ -1,0 +1,19 @@
+# ./my-playbook.yaml
+
+- name: My first playbook to run on the localhost
+  hosts: localhost
+  connection: local
+  
+  # Example of map
+  vars:
+    show_message: false
+    custom_message: I like Pokémon
+  
+  tasks:
+    - name: My debug task
+      debug:
+        msg: |
+            The custom_message value is: {{ custom_message }}
+            {% if show_message %}
+            hey!
+            {% endif %}
