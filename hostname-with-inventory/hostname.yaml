@@ -1,5 +1,5 @@
 - name: Update servers
-  hosts: all
+  hosts: "{{ hosts | default('localhost') }}"
 
   tasks:
   - name: get hostname
